@@ -1,0 +1,13 @@
+.login-box, .register-box {
+    width: 500px;
+}
+.LLutton {
+    background-color: unset;
+    border: none;
+    color: unset;
+    padding: unset;
+    text-align: unset;
+    text-decoration: none;
+    display: unset;
+    font-size: unset;
+}
