@@ -6,6 +6,7 @@
     <title>AdminLTE 3 | Starter</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" href="{{ asset('Admin/plugins/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('Admin/plugins/daterangepicker/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('Admin/plugins/select2/css/select2.css') }}">
     <link rel="stylesheet" href="{{asset('Admin/plugins/summernote/summernote-bs4.css')}}">
     <link rel="stylesheet" href="{{ asset('Admin/dist/css/adminlte.min.css') }}">
@@ -124,6 +125,9 @@
 <script src="{{ asset('Admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <!-- Select2 -->
 <script src="{{ asset('Admin/plugins/select2/js/select2.js') }}"></script>
+<!-- date-range-picker -->
+<script src="{{ asset('Admin/plugins/moment/moment.min.js') }}"></script>
+<script src="{{ asset('Admin/plugins/daterangepicker/daterangepicker.js') }}"></script>
 <!-- summernote -->
 <script src="{{asset('Admin/plugins/summernote/summernote-bs4.js')}}"></script>
 <!-- AdminLTE App -->
@@ -149,6 +153,8 @@
     function scrollWin() {
         window.scrollTo(0, 0);
     }
+
+
 </script>
 
 @yield('AdminScript')
