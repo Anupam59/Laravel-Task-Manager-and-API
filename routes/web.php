@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,10 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::post('/task-entry', [TaskController::class, 'TaskEntry']);
     Route::get('/task-edit/{id}', [TaskController::class, 'TaskEdit']);
     Route::post('/task-update/{id}', [TaskController::class, 'TaskUpdate']);
+
+    Route::get('/profile', [ProfileController::class, 'ProfileIndex']);
+    Route::get('/profile-password-update', [ProfileController::class, 'PasswordUpdatePage']);
+    Route::post('/update-user-password/{id}', [ProfileController::class, 'PasswordUpdate']);
 
 });
 

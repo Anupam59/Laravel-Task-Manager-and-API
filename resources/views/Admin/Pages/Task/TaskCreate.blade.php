@@ -1,4 +1,5 @@
 @extends('Admin.Layout.AdminLayout')
+@section('title', 'Task Create')
 @section('AdminContent')
     <div class="content-wrapper" style="min-height: 1604.08px;" data-select2-id="31">
         <section class="content-header">

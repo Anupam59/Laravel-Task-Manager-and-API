@@ -11,3 +11,6 @@
     display: unset;
     font-size: unset;
 }
+[class*=sidebar-dark-] .sidebar form {
+    color: #c2c7d0;
+}

@@ -1,10 +1,11 @@
 @extends('auth.Layout.AuthLayout')
+@section('title', 'Verify Email')
 @section('AuthContent')
     <div class="login-box">
         <!-- /.login-logo -->
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a href="#" class="h1"><b>Admin</b>LTE</a>
+                <a href="#" class="h1">Task Management System</a>
             </div>
             <div class="card-body">
                 <div class="alert alert-info">

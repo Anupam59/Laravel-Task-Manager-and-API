@@ -12,14 +12,28 @@ use Intervention\Image\Laravel\Facades\Image;
 class TaskController extends Controller
 {
     public function TaskIndex(){
-        $Task = TaskModel::join('users as creator_by', 'creator_by.id', '=', 'task.creator')
+        $date_range = request()->query('date_range');
+        $status = request()->query('status');
+        $start_date = '';
+        $end_date = '';
+        if ($date_range){
+            $start_date = explode(" - ",$date_range)[0];
+            $end_date = explode(" - ",$date_range)[1];
+        }
+        $query = TaskModel::join('users as creator_by', 'creator_by.id', '=', 'task.creator')
             ->leftJoin('users as modifier_by', 'modifier_by.id', '=', 'task.modifier')
             ->select(
                 'creator_by.name as creator_by',
                 'modifier_by.name as modifier_by',
                 'task.*'
-            )
-            ->orderBy('task_id','asc')->paginate(10);
+            );
+        if($start_date && $end_date) {
+            $query = $query->whereBetween('created_date', [$start_date, $end_date]);
+        }
+        if($status) {
+            $query = $query->where('status', $status);
+        }
+        $Task = $query->orderBy('task_id','asc')->paginate(10);
         return view('Admin/Pages/Task/TaskIndex',compact('Task'));
     }
 
@@ -55,7 +69,7 @@ class TaskController extends Controller
             }else{
                 $ImageName =time().".".$task_file->getClientOriginalExtension();
                 $Path = "Images/task/image/";
-                $ResizeImage = Image::make($task_file)->resize(1000,500);
+                $ResizeImage = Image::read($task_file)->resize(1000,500);
                 $url = $Path.$ImageName;
                 $url_database = "/".$Path.$ImageName;
                 $ResizeImage ->save($url);
@@ -79,28 +93,42 @@ class TaskController extends Controller
     public function TaskEdit($id){
         $AllUser = User::select('id','name')->get();
         $Task = TaskModel::where('task_id',$id)->first();
-        return view('Admin/Pages/Task/TaskUpdate',compact('Task','AllUser'));
+        $Extension = '';
+        $task_file = '';
+        if($Task){
+            $task_file = $Task->task_file;
+        }
+        if ($task_file){
+            $file = explode('.', $task_file);
+            $Extension = array_pop($file);
+        }
+        return view('Admin/Pages/Task/TaskUpdate',compact('Task','AllUser','Extension'));
     }
 
     public function TaskUpdate(Request $request, $id){
+
         $request->validate([
             'task_title' => 'required|unique:task,task_title,'. $id .',task_id',
             'task_file' => 'mimes:jpeg,bmp,png,gif,svg,pdf|max:1024', //only 1MB is allowed
+            'to_user_id' => 'required',
         ]);
         $data =  array();
         $data['task_title'] = $request->task_title;
         $data['task_description'] = $request->task_description;
+        $data['to_user_id'] = $request->to_user_id;
+        $data['start_date'] = explode(" - ",$request->date_range)[0];
+        $data['end_date'] = explode(" - ",$request->date_range)[1];
 
         $task_file =  $request->file('task_file');
         if ($task_file){
             $Extension = $task_file->getClientOriginalExtension();
             if ($Extension == "pdf"){
                 $ImageName =time().".".$task_file->getClientOriginalExtension();
-                $Path = "Images/notice/file/";
+                $Path = "Images/task/file/";
                 $url = $Path;
                 $url_database = "/".$Path.$ImageName;
                 $task_file->move($url, $ImageName);
-                $OldData = TaskModel::where('notice_id','=',$id)->select('task_file')->first();
+                $OldData = TaskModel::where('task_id','=',$id)->select('task_file')->first();
                 $OldImage = $OldData->task_file;
                 $OldImageUrl = substr($OldImage, 1);
                 if ($OldImage){
@@ -115,12 +143,12 @@ class TaskController extends Controller
                 }
             }else{
                 $ImageName =time().".".$task_file->getClientOriginalExtension();
-                $Path = "Images/notice/image/";
-                $ResizeImage = Image::make($task_file)->resize(1000,500);
+                $Path = "Images/task/image/";
+                $ResizeImage = Image::read($task_file)->resize(1000,500);
                 $url = $Path.$ImageName;
                 $url_database = "/".$Path.$ImageName;
                 $ResizeImage ->save($url);
-                $OldData = NoticeModel::where('notice_id','=',$id)->select('task_file')->first();
+                $OldData = TaskModel::where('task_id','=',$id)->select('task_file')->first();
                 $OldImage = $OldData->task_file;
                 $OldImageUrl = substr($OldImage, 1);
                 if ($OldImage){
@@ -137,7 +165,7 @@ class TaskController extends Controller
         }
 
         $data['status'] = $request->status;
-        $data['modifier'] = 1;
+        $data['modifier'] = Auth::user()->id;
         $data['modified_date'] = date("Y-m-d h:i:s");
         $res = TaskModel::where('task_id','=',$id)->update($data);
         if ($res){
