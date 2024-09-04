@@ -46,8 +46,12 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-12 text-center">
+                                <a href="{{ url('/admin/') }}/profile-edit/{{ $user->id }}" class="btn btn-primary">Update Profile</a>
+                            </div>
+
                             <div class="col-md-12 text-center mt-2">
-                                <a href="{{ url('/admin/') }}/profile-password-update" class="btn btn-primary">Update Password</a>
+                                <a href="{{ url('/admin/') }}/profile-password-update" class="btn btn-info">Update Password</a>
                             </div>
 
                         </div>

@@ -11,6 +11,8 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class TaskController extends Controller
 {
+
+//    public function __construct() {}
     public function TaskIndex(){
         $date_range = request()->query('date_range');
         $status = request()->query('status');
@@ -33,7 +35,7 @@ class TaskController extends Controller
         if($status) {
             $query = $query->where('status', $status);
         }
-        $Task = $query->orderBy('task_id','asc')->paginate(10);
+        $Task = $query->orderBy('created_date','desc')->paginate(10);
         return view('Admin/Pages/Task/TaskIndex',compact('Task'));
     }
 
@@ -43,10 +45,11 @@ class TaskController extends Controller
     }
 
     public function TaskEntry(Request $request){
-
+        date_default_timezone_set("Asia/Dhaka");
         $validation = $request->validate([
             'task_title' => 'required',
             'task_file' => 'mimes:jpeg,bmp,png,gif,svg,pdf|max:1024', //only 1MB is allowed
+            'to_user_id' => 'required',
         ]);
 
         $data =  array();
@@ -106,7 +109,7 @@ class TaskController extends Controller
     }
 
     public function TaskUpdate(Request $request, $id){
-
+        date_default_timezone_set("Asia/Dhaka");
         $request->validate([
             'task_title' => 'required|unique:task,task_title,'. $id .',task_id',
             'task_file' => 'mimes:jpeg,bmp,png,gif,svg,pdf|max:1024', //only 1MB is allowed
@@ -172,6 +175,25 @@ class TaskController extends Controller
             return back()->with('success_message','Task Update Successfully!');
         }else{
             return back()->with('error_message','Task Update Fail!');
+        }
+    }
+
+
+    function TaskDelete(Request $request){
+        $task_id= $request->input('task_id');
+        $OldData = TaskModel::where('task_id','=',$task_id)->select('task_file')->first();
+        $OldImage = $OldData->task_file;
+        $OldImageUrl = substr($OldImage, 1);
+        if ($OldImage){
+            if (file_exists($OldImageUrl)){
+                unlink($OldImageUrl);
+            }
+        }
+        $res= TaskModel::where('task_id','=',$task_id)->delete();
+        if ($res){
+            return back()->with('success_message','Task Delete Successfully!');
+        }else{
+            return back()->with('error_message','Task Delete Fail!');
         }
     }
 }

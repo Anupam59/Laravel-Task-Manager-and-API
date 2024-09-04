@@ -33,4 +33,25 @@ class ProfileController extends Controller
             return back()->with('error_message','Password Update Fail!');
         }
     }
+
+    public function ProfileEdit($id){
+        $User = User::where('id',$id)->select('id', 'name', 'email')->first();
+        return view('Admin/Pages/Profile/ProfileUpdate',compact('User'));
+    }
+
+    public function ProfileUpdate(Request $request, $id){
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        ]);
+        $data =  array();
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $res = User::where('id','=',$id)->update($data);
+        if ($res){
+            return back()->with('success_message','Profile Update Successfully!');
+        }else{
+            return back()->with('error_message','Profile Update Fail!');
+        }
+    }
 }

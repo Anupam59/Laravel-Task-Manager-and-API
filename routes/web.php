@@ -21,9 +21,13 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::post('/task-entry', [TaskController::class, 'TaskEntry']);
     Route::get('/task-edit/{id}', [TaskController::class, 'TaskEdit']);
     Route::post('/task-update/{id}', [TaskController::class, 'TaskUpdate']);
+    Route::post('/task-delete', [TaskController::class, 'TaskDelete']);
 
     Route::get('/profile', [ProfileController::class, 'ProfileIndex']);
     Route::get('/profile-password-update', [ProfileController::class, 'PasswordUpdatePage']);
+    Route::get('/profile-edit/{id}', [ProfileController::class, 'ProfileEdit']);
+    Route::post('/profile-update/{id}', [ProfileController::class, 'ProfileUpdate']);
+
     Route::post('/update-user-password/{id}', [ProfileController::class, 'PasswordUpdate']);
 
 });

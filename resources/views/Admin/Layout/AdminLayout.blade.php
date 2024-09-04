@@ -15,6 +15,7 @@
 
 </head>
 <body class="sidebar-mini layout-fixed control-sidebar-slide-open text-sm">
+
 <div class="wrapper">
 
     @include('Admin.Common.Navbar')

@@ -1,7 +1,9 @@
 @extends('Admin.Layout.AdminLayout')
 @section('title', 'Task')
 @section('AdminContent')
-
+    <?php
+    date_default_timezone_set("Asia/Dhaka");
+    ?>
     <div class="content-wrapper" style="min-height: 1604.08px;">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -28,7 +30,7 @@
                 <div class="card pt-2">
                     <form action="{{ url('admin/task-list') }}" method="get" class="formDiv">
                         <div class="row gy-4 justify-content-center">
-                            <div class="col-md-3">
+                            <div class="col-md-5">
                                 <div class="form-group">
                                     <label>Date Range</label>
                                     <div class="input-group">
@@ -43,7 +45,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label>Status</label>
                                     <select class="form-control" id="task_status" name="status">
@@ -57,7 +59,7 @@
 
                             <div class="col-md-3">
                                 <label class="invisible d-block">Search</label>
-                                <input class="btn btn-default" type="reset" value="Reset">
+                                <input style="width: 70px" class="btn btn-default" id="resetID" value="Reset">
                                 <input class="btn btn-default" type="submit" value="Search">
                             </div>
                         </div>
@@ -85,16 +87,19 @@
                                 <th style="width: 1%">
                                     SL
                                 </th>
-                                <th style="width: 60%">
+                                <th style="width: 55%">
                                     Title
                                 </th>
-                                <th style="width: 20%">
+                                <th style="width: 10%">
                                     Creator
                                 </th>
-                                <th class="text-center">
+                                <th style="width: 15%" class="text-center">
+                                    Date
+                                </th>
+                                <th style="width: 9%" class="text-center">
                                     Status
                                 </th>
-                                <th style="width: 20%" class="text-right">
+                                <th style="width: 10%" class="text-center">
                                     Action
                                 </th>
                             </tr>
@@ -111,6 +116,9 @@
                                     <td>
                                         <a>{{ $TaskItem->creator_by }}</a>
                                     </td>
+                                    <td class="text-center">
+                                        <a>{{ date('d M Y h:i a', strtotime($TaskItem->created_date)) }}</a>
+                                    </td>
                                     <td class="project-state">
                                         @if($TaskItem->status == 1)
                                             <span class="badge badge-primary">Pending</span>
@@ -120,11 +128,11 @@
                                             <span class="badge badge-success">Completed</span>
                                         @endif
                                     </td>
-                                    <td class="project-actions text-right">
+                                    <td class="project-actions text-center">
                                         <a class="btn btn-primary btn-sm" href="{{ url('/admin/') }}/task-edit/{{ $TaskItem->task_id }}">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
-                                        <a class="btn btn-danger btn-sm" href="#">
+                                        <a class="btn btn-danger btn-sm taskDeleteBtn" data-id="{{ $TaskItem->task_id }}">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </td>
@@ -163,26 +171,62 @@
         <!-- /.content -->
     </div>
 
+
+
+
+    <div class="modal fade" id="deleteTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{{ url('admin/task-delete')}}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body p-3 text-center">
+                        <h5 class="mt-4">Do You Want To Delete?</h5>
+                        <input id="TaskDeleteId" type="hidden" name="task_id">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">No</button>
+                        <button  id="TaskDeleteConfirmBtn" type="submit" class="btn  btn-sm  btn-danger">Yes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 @endsection
 
 @section('AdminScript')
     <script>
         //Date range picker
         $('#reservation').daterangepicker({
+            timePicker: true,
             autoUpdateInput: false,
             locale: {
-                format: 'YYYY-MM-DD',
+                format: 'YYYY-MM-DD hh:mm A',
                 cancelLabel: 'Clear'
             }
         });
 
         $('#reservation').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+            $(this).val(picker.startDate.format('YYYY-MM-DD hh:mm A') + ' - ' + picker.endDate.format('YYYY-MM-DD hh:mm A'));
         });
 
         $('#reservation').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
         });
+
+        $('#resetID').click(function(){
+            $('#reservation').val('');
+            $('#task_status').val('');
+        });
+
+
+        $('.taskDeleteBtn').click(function(){
+            var id= $(this).data('id');
+            $('#TaskDeleteId').val(id);
+            $('#deleteTaskModal').modal('show');
+        })
 
     </script>
 @endsection
