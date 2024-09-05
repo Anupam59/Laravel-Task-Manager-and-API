@@ -15,9 +15,6 @@ use Illuminate\Support\Facades\Log;
 class AuthController extends Controller
 {
 
-    /**
-     * Register New User.
-     */
     public function Register(ResisterRequest $request)
     {
         try {
@@ -39,10 +36,6 @@ class AuthController extends Controller
         }
     }
 
-
-    /**
-     * Login New User.
-     */
     public function Login(LoginRequest $request)
     {
         try {
@@ -78,7 +71,6 @@ class AuthController extends Controller
         }
     }
 
-
     public function userLoggedOut(){
         try {
             $user = Auth::user();
@@ -93,6 +85,5 @@ class AuthController extends Controller
             return ResponseHelper::error(message: 'Unable to User Logout: Please try again.'. $exception->getMessage(), statusCode: 400);
         }
     }
-
 
 }

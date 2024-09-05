@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('Admin/plugins/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Admin/plugins/daterangepicker/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('Admin/plugins/select2/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('Admin/plugins/toastr/toastr.css') }}">
     <link rel="stylesheet" href="{{asset('Admin/plugins/summernote/summernote-bs4.css')}}">
     <link rel="stylesheet" href="{{ asset('Admin/dist/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Admin/dist/css/style.css') }}">
@@ -37,6 +38,8 @@
 <!-- date-range-picker -->
 <script src="{{ asset('Admin/plugins/moment/moment.min.js') }}"></script>
 <script src="{{ asset('Admin/plugins/daterangepicker/daterangepicker.js') }}"></script>
+<!-- toastr -->
+<script src="{{asset('Admin/plugins/toastr/toastr.js')}}"></script>
 <!-- summernote -->
 <script src="{{asset('Admin/plugins/summernote/summernote-bs4.js')}}"></script>
 <!-- AdminLTE App -->
@@ -63,8 +66,8 @@
         window.scrollTo(0, 0);
     }
 
-
 </script>
+
 
 @yield('AdminScript')
 </body>

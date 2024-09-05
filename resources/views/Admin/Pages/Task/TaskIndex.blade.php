@@ -228,5 +228,19 @@
             $('#deleteTaskModal').modal('show');
         })
 
+
+        @if(Session::has('success_message'))
+            toastr.options ={"closeButton" : true,"progressBar" : true}
+            toastr.success("{{ session('success_message') }}");
+        @endif
+        @if(Session::has('error_message'))
+            toastr.options ={"closeButton" : true,"progressBar" : true}
+            toastr.error("{{ session('error_message') }}");
+        @endif
+
+
     </script>
+
+
+
 @endsection
