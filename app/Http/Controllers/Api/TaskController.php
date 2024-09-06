@@ -26,7 +26,7 @@ class TaskController extends Controller
                     'task.*'
                 )->orderBy('created_date','desc')->get();
             if ($Task){
-                return ResponseHelper::success(message: 'Task All Data Get!', data: $Task, statusCode: 201);
+                return ResponseHelper::success(message: 'Task All Data Get!', data: $Task, statusCode: 200);
             }else{
                 return ResponseHelper::error(message: 'Task All Data Get Fail: Please try again.', statusCode: 400);
             }
@@ -83,7 +83,7 @@ class TaskController extends Controller
             $data['modified_date'] = date("Y-m-d h:i:s");
             $res = TaskModel::insert($data);
             if ($res){
-                return ResponseHelper::success(message: 'Task Add Successfully!', data: $res, statusCode: 201);
+                return ResponseHelper::success(message: 'Task Add Successfully!', data: $res, statusCode: 200);
             }else{
                 return ResponseHelper::error(message: 'Task Add Fail: Please try again.', statusCode: 400);
             }
@@ -185,20 +185,26 @@ class TaskController extends Controller
     }
 
     function taskDelete(Request $request){
-        $task_id= $request->input('task_id');
-        $OldData = TaskModel::where('task_id','=',$task_id)->select('task_file')->first();
-        $OldImage = $OldData->task_file;
-        $OldImageUrl = substr($OldImage, 1);
-        if ($OldImage){
-            if (file_exists($OldImageUrl)){
-                unlink($OldImageUrl);
+        try {
+            $task_id= $request->input('task_id');
+            $OldData = TaskModel::where('task_id','=',$task_id)->select('task_file')->first();
+            $OldImage = $OldData->task_file;
+            $OldImageUrl = substr($OldImage, 1);
+            if ($OldImage){
+                if (file_exists($OldImageUrl)){
+                    unlink($OldImageUrl);
+                }
             }
-        }
-        $res= TaskModel::where('task_id','=',$task_id)->delete();
-        if ($res){
-            return back()->with('success_message','Task Delete Successfully!');
-        }else{
-            return back()->with('error_message','Task Delete Fail!');
+            $res= TaskModel::where('task_id','=',$task_id)->delete();
+            if ($res){
+                return ResponseHelper::success(message: 'Task Delete Successfully!', data: $res, statusCode: 200);
+            }else{
+                return ResponseHelper::error(message: 'Task Delete Fail!: Please try again.', statusCode: 400);
+            }
+
+        }catch (Exception $exception){
+            Log::error('Unable to Task:' . $exception->getMessage() .' - Line no. ' . $exception->getLine());
+            return ResponseHelper::error(message: 'Unable to Task:' . $exception->getMessage() .' - Line no. ' . $exception->getLine(), statusCode: 400);
         }
     }
 }
